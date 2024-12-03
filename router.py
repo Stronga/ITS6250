@@ -1,3 +1,32 @@
+"""
+Router Module for Distance Vector Routing Simulation.
+
+This module defines the Router class and associated utilities for simulating a Distance Vector 
+Routing Protocol. It includes features for managing routing tables, sending and receiving 
+updates, and dynamic interface control.
+
+Modules Used:
+- socket: For UDP socket communication.
+- threading: For concurrent operations of routers.
+- json: For serializing and deserializing routing tables.
+- time: For periodic update delays.
+- logging: For managing detailed logs of router activities.
+
+Key Features:
+- Dynamic routing table updates using the Bellman-Ford algorithm.
+- Support for virtual interfaces and neighbor management.
+- Colored logging for enhanced debugging.
+- Routing table synchronization across multiple routers.
+
+Citation:
+- Bellman-Ford Algorithm Python Implementation: https://github.com/arnab132/Bellman-Ford-Algorithm-Python
+- Bellman-Ford Algorithm: https://en.wikipedia.org/wiki/Bellman–Ford_algorithm
+- Python Socket Programming Documentation: https://docs.python.org/3/library/socket.html
+- Python Logging Documentation: https://docs.python.org/3/library/logging.html
+
+Author: Yaw Akosah
+"""
+
 import socket
 import threading
 import json
@@ -193,7 +222,7 @@ class Router:
         """
         Add a neighbor dynamically.
         :param neighbor_name: Name of the new neighbor.
-        :param neighbor_port: UDP port number of the neighbor.
+        :param neighbor_Interface: Interface of the neighbor.
         :param cost: Link cost to the new neighbor.
         """
         self.neighbors[neighbor_name] = (neighbor_port, cost)

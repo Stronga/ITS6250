@@ -1,3 +1,24 @@
+"""
+DVRouterCLI: Command-line interface for managing Distance Vector Routers.
+
+This script provides a simulated environment for creating, managing, and interacting with 
+distance vector routing protocols. It includes features for loading router configurations, 
+managing router operations, and visualizing network topology.
+
+Modules Used:
+- cmd2: For creating command-line interfaces.
+- json: For handling configuration files.
+- logging: For managing log messages.
+- router: Custom module containing Router class and associated utilities from router.py.
+- visualize: Custom module for network visualization from visualize.py.
+
+Citation:
+- Python Logging Documentation: https://docs.python.org/3/library/logging.html
+- cmd2 Documentation: https://cmd2.readthedocs.io/
+
+Author: Yaw Akosah
+"""
+
 import cmd2
 import json
 from router import Router
@@ -30,13 +51,20 @@ class DVRouterCLI(cmd2.Cmd):
         )
         self.logger = logger
 
-    
+    # Disable console logging by default
+        handlers_to_remove = [
+            handler for handler in self.logger.handlers if isinstance(handler, logging.StreamHandler)
+        ]
+        for handler in handlers_to_remove:
+            self.logger.removeHandler(handler)
+
+        self.poutput("*********")
 
     
-    def do_enable_logging(self, args):
+    def do_show_updates(self, args):
         """
         Enable logging to the console.
-        Usage: enable_logging
+        Usage: show_updates
         """
         if not any(isinstance(h, logging.StreamHandler) for h in self.logger.handlers):
             console_handler = logging.StreamHandler()
@@ -46,10 +74,10 @@ class DVRouterCLI(cmd2.Cmd):
         else:
             self.poutput("Logging to console is already enabled.")
 
-    def do_disable_logging(self, args):
+    def do_hide_updates(self, args):
         """
         Disable logging to the console.
-        Usage: disable_logging
+        Usage: hide_updates
         """
         handlers_to_remove = [
             handler for handler in self.logger.handlers if isinstance(handler, logging.StreamHandler)
@@ -213,6 +241,8 @@ class DVRouterCLI(cmd2.Cmd):
         except Exception as e:
             self.perror(f"Error: {e}")
 
+    
+
     def do_start_all_interfaces(self, args):
         """
         Start all virtual interfaces for a specific router.
@@ -247,62 +277,31 @@ class DVRouterCLI(cmd2.Cmd):
         except Exception as e:
             self.perror(f"Error: {e}")
 
+    
+
     def do_list_interfaces(self, args):
         """
-        List all virtual interfaces for a router.
+        List all virtual interfaces for a router in a table format.
         Usage: list_interfaces <router_name>
         """
         try:
             router_name = args.strip()
             if router_name in self.routers:
                 router = self.routers[router_name]
-                self.poutput(f"Interfaces for {router_name}: {router.interfaces}")
+                print(f"\nInterfaces for {router_name}:")
+                print(f"{'Neighbor':<10} | {'Interface':<15} | {'Cost':<5} | {'Status':<10}")
+                print("-" * 50)
+                for neighbor_name, (neighbor_port, cost) in router.neighbors.items():
+                    interface_port = neighbor_port
+                    status = "Active" if router.interfaces.get(interface_port, False) else "Inactive"
+                    print(f"{neighbor_name:<10} | {interface_port:<15} | {cost:<5} | {status:<10}")
+                print("-" * 50)
             else:
                 self.perror(f"Router {router_name} not found.")
         except Exception as e:
             self.perror(f"Error: {e}")
 
-    def do_hide_updates(self, args):
-        """
-        Disable logging to the console.
-        Usage: hide_updates
-        """
-        try:
-            handlers_to_remove = [
-                handler for handler in root_logger.handlers if isinstance(handler, logging.StreamHandler)
-            ]
-            if handlers_to_remove:
-                for handler in handlers_to_remove:
-                    root_logger.removeHandler(handler)
-                self.poutput("Console logging disabled.")
-            else:
-                self.poutput("Console logging is already disabled.")
-        except Exception as e:
-            self.perror(f"Error: {e}")
-
-    def do_show_updates(self, args):
-        """
-        Enable logging to the console.
-        Usage: show_updates
-        """
-        try:
-            existing_handlers = [
-                handler for handler in root_logger.handlers if isinstance(handler, logging.StreamHandler)
-            ]
-            if not existing_handlers:
-                console_handler = logging.StreamHandler()
-                console_handler.setLevel(logging.INFO)
-                console_handler.setFormatter(
-                    logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-                )
-                root_logger.addHandler(console_handler)
-                self.poutput("Console logging enabled.")
-            else:
-                self.poutput("Console logging is already enabled.")
-        except Exception as e:
-            self.perror(f"Error: {e}")
-
-
+            
     def do_status(self, args):
         """
         Show the status of all routers and their interfaces.

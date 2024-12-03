@@ -1,3 +1,27 @@
+"""
+Visualization Module for Distance Vector Routing Simulation.
+
+This module defines the function for dynamically visualizing the network topology 
+of routers using NetworkX and Matplotlib. It renders an interactive graph to display 
+router states, link costs, and active/inactive statuses.
+
+Modules Used:
+- networkx: For creating and managing the network graph.
+- matplotlib: For rendering the graph and animating updates.
+
+Key Features:
+- Real-time visualization of router activity and topology changes.
+- Customizable node and edge attributes (e.g., active state, costs).
+- Non-blocking interactive mode to integrate with a CLI application.
+
+Citation:
+- NetworkX Documentation: https://networkx.org/documentation/stable/index.html
+- Matplotlib Animation Guide: https://matplotlib.org/stable/gallery/animation/index.html
+- Python Matplotlib Documentation: https://matplotlib.org/stable/contents.html
+
+Author: Yaw Akosah
+"""
+
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
